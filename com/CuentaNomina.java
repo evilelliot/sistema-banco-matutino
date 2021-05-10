@@ -29,6 +29,12 @@ public class CuentaNomina extends CuentaBancaria{
     public void consultaSaldo(){
         System.out.println("Su saldo es: " +  this.saldo);
     }
+    public double getSaldo(){
+        return this.saldo;
+    }
+    public long getID(){
+        return this.numeroCuenta;
+    }
     // Mostrar todos los movimientos de dicha cuenta
     public void mostrarMovimientos(){
         for(int i = 0; i <= this.movimientos.size() - 1; i++){

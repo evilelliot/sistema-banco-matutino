@@ -5,6 +5,7 @@ import com.CuentaInversion;
 import com.CuentaNomina;
 import com.Cliente;
 import java.util.Scanner;
+import java.io.IOException;
 
 
 class Main{
@@ -16,6 +17,8 @@ class Main{
     // Arraylist para guardar todas las cuentas
     static ArrayList<CuentaNomina> cuentas = new ArrayList<>();
     static ArrayList<CuentaInversion> cuentasIn = new ArrayList<>();
+    // Constantes de prueba: si quieres mostrar los tooltips de las funciones debug marcalo como true
+    static final boolean DEBUG = false;
     // Opcion input
     public static void main(String[] args){
         
@@ -36,6 +39,7 @@ class Main{
             Menu();
             System.out.print("Tu opcion: ");
             opt = Integer.parseInt(input.nextLine());
+            clearScreen();
             switch(opt){
                 case 1:
                     System.out.println("Crear una cuenta de nomina");
@@ -94,23 +98,33 @@ class Main{
                         System.out.println("Buscando cuenta de nomina.");
                         System.out.println("Introduce el nombre del cuentahabiente: ");
                         no = input.nextLine();
+                        if(DEBUG == true){ System.out.println(" > " + no); }
                         Double cantidad;
-                        if(getIndexCuenta(no, "nomina") != 0000){
+                        if(getIndexCuenta(no, "nomina") >= 0){
+                            clearScreen();
+                            if(DEBUG == true){ System.out.println(getIndexCuenta(no, "nomina")); }
                             System.out.println("Retirar - Depositar - Mostrar saldo - Mostrar movimientos");
+                            System.out.print(" -> ");
                             String o = input.nextLine();
+                            clearScreen();
                             switch(o){
+                                
                                 case "retirar":
-                                    System.out.println("Cantdad:");
-                                    cantidad = input.nextDouble();
+                                    System.out.println("Cantidad a retirar:");
+                                    cantidad = Double.parseDouble(input.nextLine());
                                     cuentas.get(getIndexCuenta(no, "nomina")).retirar(cantidad);
+                                    System.out.println("Se han retirado $" + cantidad + " de tu cuenta nomina " + cuentas.get(getIndexCuenta(no, "nomina")).getID() + ".");
+                                    System.out.println("Saldo actual de $" + cuentas.get(getIndexCuenta(no, "nomina")).getSaldo());
                                 break;
                                 case "depositar":
-                                    System.out.println("Cantdad:");
-                                    cantidad = input.nextDouble();
+                                System.out.println("Cantidad a depositar:");
+                                    cantidad = Double.parseDouble(input.nextLine());
                                     cuentas.get(getIndexCuenta(no, "nomina")).depositar(cantidad);
+                                    System.out.println("Se han depositado $" + cantidad + " a tu cuenta nomina " + cuentas.get(getIndexCuenta(no, "nomina")).getID() + ".");
+                                    System.out.println("Saldo actual de $" + cuentas.get(getIndexCuenta(no, "nomina")).getSaldo());
                                 break;
                                 case "mostrar saldo":
-                                    cuentas.get(getIndexCuenta(no, "nomina")).consultaSaldo();;
+                                    cuentas.get(getIndexCuenta(no, "nomina")).consultaSaldo();
                                 break;
                                 case "mostrar movimientos":
                                     cuentas.get(getIndexCuenta(no, "nomina")).mostrarMovimientos();
@@ -123,7 +137,7 @@ class Main{
                         System.out.println("Buscando cuenta de inversion.");
                         System.out.println("Introduce el nombre del cuentahabiente: ");
                         no = input.nextLine();
-                        if(getIndexCuenta(no, "inversion") != 0000){
+                        if(getIndexCuenta(no, "inversion") >= 0){
                             cuentasIn.get(getIndexCuenta(no, "inversion")).proyectarInversion();
                         }else{
                             System.out.println("No se encontró la cuenta solicitada.");
@@ -167,24 +181,43 @@ class Main{
 
     }
     static private int getIndexCuenta(String nombre, String tipo){
+        int data = 0;
         if(tipo.equals("nomina")){
             for(int i = 0; i <= cuentas.size() - 1; i ++){
-                if(cuentas.get(i).cliente.nombre.toLowerCase() == nombre.toLowerCase()){
-                    return i;
+                
+                if(cuentas.get(i).cliente.nombre.toLowerCase().equals(nombre.toLowerCase())){
+                    if(DEBUG == true){ System.out.println("found"); }
+                    
+                    data = i;
                 }else{
-                    return 0000;
+                    data = 0;
                 }
             }
-            return 0;
+            if(DEBUG == true){ System.out.println(" data > " + data); }
+            
+            return data;
+            
         }else{
             for(int i = 0; i <= cuentasIn.size() - 1; i ++){
-                if(cuentasIn.get(i).cliente.nombre.toLowerCase() == nombre.toLowerCase()){
-                    return i;
+                if(cuentasIn.get(i).cliente.nombre.toLowerCase().equals(nombre.toLowerCase())){
+                    data = i;
                 }else{
-                    return 0000;
+                    data = 0;
                 }
             }
-            return 0;
+            if(DEBUG == true){ System.out.println(" data > " + data); }
+            return data;
         }
+        
+
+    }
+    // Función borrar pantalla
+    private static void clearScreen() {
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (InterruptedException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }    
     }
 }
